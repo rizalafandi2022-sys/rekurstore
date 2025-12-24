@@ -1,301 +1,186 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, Globe, Gamepad2, Landmark, Copy, MessageCircle } from 'lucide-react';
+import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, MessageCircle, Copy } from 'lucide-react';
 
 const CATEGORIES = [
-  {
-    id: 'pulsa',
-    name: 'Pulsa & Data',
-    icon: <Smartphone className="w-6 h-6" />,
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-    desc: 'Semua operator'
-  },
-  {
-    id: 'pln',
-    name: 'Token PLN',
-    icon: <Zap className="w-6 h-6" />,
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/20',
-    desc: 'Listrik Prabayar'
-  },
-  {
-    id: 'ewallet',
-    name: 'E-Wallet',
-    icon: <Wallet className="w-6 h-6" />,
-    color: 'text-green-400',
-    bg: 'bg-green-500/10',
-    border: 'border-green-500/20',
-    desc: 'Dana, OVO, Gopay'
-  },
-  {
-    id: 'internet',
-    name: 'Internet TV',
-    icon: <Wifi className="w-6 h-6" />,
-    color: 'text-red-400',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/20',
-    desc: 'Indihome, Biznet'
-  }
+  { id: 'pulsa', name: 'Pulsa & Data', icon: <Smartphone className="w-5 h-5" />, color: 'text-blue-400', desc: 'All Operator' },
+  { id: 'pln', name: 'PLN Token', icon: <Zap className="w-5 h-5" />, color: 'text-yellow-400', desc: 'Listrik Prabayar' },
+  { id: 'ewallet', name: 'E-Wallet', icon: <Wallet className="w-5 h-5" />, color: 'text-green-400', desc: 'Top Up Saldo' },
+  { id: 'internet', name: 'Internet TV', icon: <Wifi className="w-5 h-5" />, color: 'text-red-400', desc: 'Bill Payment' }
 ];
 
-// Configuration data for each tab
-const TAB_CONTENT: Record<string, { label: string; placeholder: string; options: { label: string; sub: string }[] }> = {
+const TAB_CONTENT: Record<string, any> = {
   pulsa: {
-    label: 'Nomor Handphone',
+    label: 'Phone Number',
     placeholder: '0812 xxxx xxxx',
     options: [
-      { label: '5.000', sub: 'Rp 6.500' },
-      { label: '10.000', sub: 'Rp 11.500' },
-      { label: '20.000', sub: 'Rp 21.000' },
-      { label: '50.000', sub: 'Rp 50.500' },
-      { label: '100.000', sub: 'Rp 99.000' },
-      { label: 'Data 10GB', sub: 'Rp 35.000' }
+      { label: '5.000', sub: 'Rp 6.500' }, { label: '10.000', sub: 'Rp 11.500' }, { label: '20.000', sub: 'Rp 21.000' },
+      { label: '50.000', sub: 'Rp 50.500' }, { label: '100.000', sub: 'Rp 99.000' }, { label: 'Data 10GB', sub: 'Rp 35.000' }
     ]
   },
   pln: {
-    label: 'Nomor Meter / ID Pelanggan',
+    label: 'Meter ID',
     placeholder: '1234 5678 9012',
     options: [
-      { label: 'IDR 20k', sub: 'Rp 22.500' },
-      { label: 'IDR 50k', sub: 'Rp 52.500' },
-      { label: 'IDR 100k', sub: 'Rp 102.500' },
-      { label: 'IDR 200k', sub: 'Rp 202.500' },
-      { label: 'IDR 500k', sub: 'Rp 502.500' },
-      { label: 'Tagihan', sub: 'Cek Tagihan' }
+      { label: '20k', sub: 'Rp 22.500' }, { label: '50k', sub: 'Rp 52.500' }, { label: '100k', sub: 'Rp 102.500' },
+      { label: '200k', sub: 'Rp 202.500' }, { label: '500k', sub: 'Rp 502.500' }, { label: 'Check Bill', sub: 'Inquiry' }
     ]
   },
   ewallet: {
-    label: 'Nomor HP Terdaftar',
-    placeholder: '08xx (OVO/DANA/Gopay)',
+    label: 'Account Phone',
+    placeholder: '08xx Account Number',
     options: [
-      { label: 'Top Up 20k', sub: 'Rp 21.000' },
-      { label: 'Top Up 50k', sub: 'Rp 51.000' },
-      { label: 'Top Up 100k', sub: 'Rp 101.000' },
-      { label: 'Top Up 200k', sub: 'Rp 201.000' },
-      { label: 'Saldo 500k', sub: 'Rp 501.000' },
-      { label: 'Saldo 1jt', sub: 'Rp 1.001.000' }
+      { label: 'Top Up 20k', sub: 'Rp 21.000' }, { label: 'Top Up 50k', sub: 'Rp 51.000' }, { label: 'Top Up 100k', sub: 'Rp 101.000' },
+      { label: 'Top Up 200k', sub: 'Rp 201.000' }, { label: 'Saldo 500k', sub: 'Rp 501.000' }, { label: 'Saldo 1jt', sub: 'Rp 1.001.000' }
     ]
   },
   internet: {
-    label: 'ID Pelanggan TV/Internet',
-    placeholder: '1234567890',
+    label: 'Subscriber ID',
+    placeholder: 'Customer ID',
     options: [
-      { label: 'Indihome', sub: 'Bayar Tagihan' },
-      { label: 'Biznet', sub: 'Bayar Tagihan' },
-      { label: 'First Media', sub: 'Bayar Tagihan' },
-      { label: 'Voucher Wifi', sub: 'Rp 5.000' },
-      { label: 'Voucher Wifi', sub: 'Rp 50.000' },
-      { label: 'MyRepublic', sub: 'Bayar Tagihan' }
+      { label: 'Indihome', sub: 'Pay Bill' }, { label: 'Biznet', sub: 'Pay Bill' }, { label: 'First Media', sub: 'Pay Bill' },
+      { label: 'MyRepublic', sub: 'Pay Bill' }, { label: 'XL Home', sub: 'Pay Bill' }, { label: 'Voucher Wifi', sub: 'Rp 5.000' }
     ]
   }
 };
 
-interface PPOBSectionProps {
-  activeTab: string;
-  onTabChange: (id: string) => void;
-  onBuy: (item: { name: string; price: string; category: string; prefilledTarget?: string }) => void;
-}
-
-const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy }) => {
+const PPOBSection: React.FC<{ activeTab: string; onTabChange: (id: string) => void; onBuy: (item: any) => void }> = ({ activeTab, onTabChange, onBuy }) => {
   const currentContent = TAB_CONTENT[activeTab] || TAB_CONTENT['pulsa'];
-  
-  // Local state for input values
   const [inputValue, setInputValue] = useState('');
-  const [selectedOption, setSelectedOption] = useState<{label: string, sub: string} | null>(null);
+  const [selectedOption, setSelectedOption] = useState<any>(null);
 
-  // Reset local state when tab changes
-  useEffect(() => {
-    setInputValue('');
-    setSelectedOption(null);
-  }, [activeTab]);
+  useEffect(() => { setInputValue(''); setSelectedOption(null); }, [activeTab]);
 
-  const handleBuyClick = () => {
-    if (!inputValue) {
-        alert("Mohon masukkan nomor tujuan terlebih dahulu.");
-        return;
-    }
-    
-    // Default to first option if none selected, or handle error. Using first for smoother UX here.
-    const optionToBuy = selectedOption || currentContent.options[0];
-    
+  const handleBuy = () => {
+    if (!inputValue) return alert("Masukkan nomor tujuan.");
+    const option = selectedOption || currentContent.options[0];
     onBuy({
-        category: 'PPOB',
-        name: `${CATEGORIES.find(c => c.id === activeTab)?.name} - ${optionToBuy.label}`,
-        price: optionToBuy.sub,
-        prefilledTarget: inputValue
+      category: 'PPOB',
+      name: `${CATEGORIES.find(c => c.id === activeTab)?.name} - ${option.label}`,
+      price: option.sub,
+      prefilledTarget: inputValue
     });
   };
 
-  const handleCopyAdmin = () => {
-    navigator.clipboard.writeText("628995942945");
-    alert("Nomor Admin berhasil disalin!");
-  };
-
   return (
-    <div className="py-20 bg-[#050511] relative" id="ppob">
-        {/* Background Decorative */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div className="py-32 bg-transparent relative" id="ppob">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Pusat <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Top Up</span> Instan
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            Isi ulang kebutuhan digital Anda dalam hitungan detik. Pembayaran aman, pengiriman instan, dan dukungan 24/7.
-          </p>
+        <div className="flex flex-col lg:flex-row justify-between items-end gap-10 mb-16">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 text-green-400 font-bold text-xs uppercase tracking-[0.3em] mb-6">
+                <div className="h-px w-8 bg-green-400"></div>
+                Transaction Hub
+            </div>
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                Instantly <span className="text-green-500">Refill</span> Your Digital Needs.
+            </h2>
+          </div>
+          <div className="text-right hidden lg:block">
+            <p className="text-gray-400 text-sm max-w-[300px] mb-4">Proses otomatis dengan konfirmasi instan. Keamanan transaksi terjamin 100%.</p>
+            <div className="flex justify-end gap-2">
+               {[...Array(4)].map((_, i) => <div key={i} className="w-8 h-8 rounded bg-white/5 border border-white/5"></div>)}
+            </div>
+          </div>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            {CATEGORIES.map((cat) => (
-                <div 
-                    key={cat.id}
-                    onClick={() => onTabChange(cat.id)}
-                    className={`cursor-pointer rounded-2xl p-4 border transition-all duration-300 group hover:-translate-y-1 ${activeTab === cat.id ? `bg-[#1a1a40] ${cat.border} ring-1 ring-white/10` : 'bg-[#0f0f2d] border-white/5 hover:border-white/20'}`}
-                >
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${cat.bg} ${cat.color} group-hover:scale-110 transition-transform`}>
-                        {cat.icon}
-                    </div>
-                    <h3 className={`font-bold text-lg mb-1 ${activeTab === cat.id ? 'text-white' : 'text-gray-300'}`}>{cat.name}</h3>
-                    <p className="text-xs text-gray-500">{cat.desc}</p>
-                </div>
-            ))}
-        </div>
-
-        {/* Quick Transaction Panel */}
-        <div className="bg-[#0f0f2d] border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3">
+        <div className="glass-card rounded-[2.5rem] overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-4">
                 
-                {/* Left: Input Form */}
-                <div className="p-8 lg:col-span-2">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
-                            {CATEGORIES.find(c => c.id === activeTab)?.icon}
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold text-white">
-                                {CATEGORIES.find(c => c.id === activeTab)?.name}
-                            </h3>
-                            <p className="text-sm text-gray-400">Masukkan detail transaksi</p>
-                        </div>
-                    </div>
+                {/* Sidebar Categories */}
+                <div className="bg-white/[0.02] border-r border-white/5 p-8 space-y-3">
+                    {CATEGORIES.map((cat) => (
+                        <button 
+                            key={cat.id}
+                            onClick={() => onTabChange(cat.id)}
+                            className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${activeTab === cat.id ? 'bg-white text-black shadow-xl scale-[1.02]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                        >
+                            <div className={`p-2 rounded-lg ${activeTab === cat.id ? 'bg-black/10' : 'bg-white/5'}`}>{cat.icon}</div>
+                            <div className="text-left">
+                                <p className="text-sm font-bold tracking-tight">{cat.name}</p>
+                                <p className={`text-[10px] font-medium opacity-60 ${activeTab === cat.id ? 'text-black' : 'text-gray-500'}`}>{cat.desc}</p>
+                            </div>
+                        </button>
+                    ))}
+                </div>
 
-                    <div className="space-y-6 max-w-lg">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">
-                                {currentContent.label}
-                            </label>
-                            <div className="relative">
+                {/* Main Transaction Area */}
+                <div className="lg:col-span-2 p-10">
+                    <div className="max-w-xl space-y-8">
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">{currentContent.label}</label>
+                            <div className="relative group">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5 group-focus-within:text-blue-500 transition-colors" />
                                 <input 
                                     type="text" 
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     placeholder={currentContent.placeholder} 
-                                    className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 pl-11 transition-all"
+                                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 pl-14 text-white font-medium focus:outline-none focus:border-blue-500 transition-all placeholder:text-gray-600"
                                 />
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                             </div>
                         </div>
 
-                        <div>
-                             <label className="block text-sm font-medium text-gray-300 mb-3">
-                                Pilih Nominal / Paket
-                            </label>
+                        <div className="space-y-3">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Select Amount</label>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {currentContent.options.map((opt, idx) => (
+                                {currentContent.options.map((opt: any, idx: number) => (
                                     <button 
                                         key={idx} 
                                         onClick={() => setSelectedOption(opt)}
-                                        className={`py-3 px-4 rounded-xl border transition-all text-left group ${selectedOption?.label === opt.label ? 'bg-blue-600 border-blue-500 ring-1 ring-blue-400' : 'border-white/5 bg-[#1a1a40]/50 hover:bg-white/10 hover:border-white/20'}`}
+                                        className={`p-4 rounded-2xl border transition-all text-left ${selectedOption?.label === opt.label ? 'bg-blue-600 border-blue-500 shadow-lg shadow-blue-500/20' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
                                     >
-                                        <span className={`block text-sm font-bold ${selectedOption?.label === opt.label ? 'text-white' : 'text-white'}`}>{opt.label}</span>
-                                        <span className={`block text-xs ${selectedOption?.label === opt.label ? 'text-blue-100' : 'text-gray-500'}`}>{opt.sub}</span>
+                                        <p className="text-xs font-bold text-white mb-1">{opt.label}</p>
+                                        <p className={`text-[10px] font-medium ${selectedOption?.label === opt.label ? 'text-blue-100' : 'text-gray-500'}`}>{opt.sub}</p>
                                     </button>
                                 ))}
                             </div>
                         </div>
-                        
+
                         <button 
-                            onClick={handleBuyClick}
-                            className="w-full mt-4 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                            onClick={handleBuy}
+                            className="w-full py-5 bg-white text-black font-bold rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                         >
-                            Lanjut Pembayaran <ChevronRight size={18} />
+                            Proceed to Payment <ChevronRight size={18} />
                         </button>
                     </div>
                 </div>
 
-                {/* Right: Promo / Info */}
-                <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-8 border-t lg:border-t-0 lg:border-l border-white/5 flex flex-col justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                    
-                    <div className="relative z-10 flex flex-col h-full">
-                        <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-4 backdrop-blur-md">
-                            <CreditCard className="text-white" />
+                {/* Status / Contact */}
+                <div className="p-10 bg-white/[0.02] border-l border-white/5 flex flex-col">
+                    <h4 className="text-white font-bold mb-6 text-sm flex items-center gap-2">
+                        <CreditCard size={16} className="text-blue-400" />
+                        System Status
+                    </h4>
+                    <div className="space-y-6 flex-1">
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <p className="text-xs text-gray-400 font-medium">Automatic Processing Active</p>
                         </div>
-                        <h4 className="text-2xl font-bold text-white mb-2">Metode Pembayaran</h4>
-                        <p className="text-gray-400 text-sm mb-6">Nikmati kemudahan bertransaksi dengan berbagai pilihan pembayaran otomatis dan manual.</p>
-                        
-                        <div className="space-y-4 mb-8">
-                            <div className="flex items-center gap-3 text-sm text-gray-300">
-                                <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> 
-                                <span>QRIS (All Payment)</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-sm text-gray-300">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"></div> 
-                                <span>Transfer Bank (BCA, Mandiri, BRI)</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-sm text-gray-300">
-                                <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_#a855f7]"></div> 
-                                <span>E-Wallet (Dana, OVO, Gopay, Shopee)</span>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-4 gap-2 opacity-80 grayscale hover:grayscale-0 transition-all duration-500 mb-auto">
-                            {/* Payment Logos Placeholders */}
-                            <div className="h-8 bg-white/10 rounded flex items-center justify-center text-[7px] font-bold text-white">QRIS</div>
-                            <div className="h-8 bg-blue-700 rounded flex items-center justify-center text-[7px] font-bold text-white">BCA</div>
-                            <div className="h-8 bg-blue-900 rounded flex items-center justify-center text-[7px] font-bold text-white">MANDIRI</div>
-                            <div className="h-8 bg-blue-600 rounded flex items-center justify-center text-[7px] font-bold text-white">BRI</div>
-                            <div className="h-8 bg-blue-400 rounded flex items-center justify-center text-[7px] font-bold text-white">DANA</div>
-                            <div className="h-8 bg-purple-600 rounded flex items-center justify-center text-[7px] font-bold text-white">OVO</div>
-                            <div className="h-8 bg-green-500 rounded flex items-center justify-center text-[7px] font-bold text-white">GOPAY</div>
-                            <div className="h-8 bg-orange-500 rounded flex items-center justify-center text-[7px] font-bold text-white">SHOPEE</div>
-                        </div>
-
-                        {/* Admin Contact Highlight */}
-                        <div className="mt-8 pt-6 border-t border-white/10 w-full">
-                           <p className="text-xs text-center text-blue-200 mb-3 font-medium uppercase tracking-wider">
-                              Kendala Pembayaran?
-                           </p>
-                           <div 
-                              onClick={handleCopyAdmin}
-                              className="flex items-center justify-between bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 cursor-pointer hover:bg-green-500/30 transition-all group shadow-lg shadow-green-900/10"
-                           >
-                              <div className="flex items-center gap-3">
-                                  <div className="p-2 bg-green-500 rounded-lg text-white shadow-lg shadow-green-500/20">
-                                      <MessageCircle size={20} fill="white" />
-                                  </div>
-                                  <div>
-                                      <p className="text-[10px] text-green-300 font-bold leading-tight">WHATSAPP ADMIN</p>
-                                      <p className="text-lg font-bold text-white tracking-wide font-mono">+62 899-5942-945</p>
-                                  </div>
-                              </div>
-                              <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/20 transition-colors border border-white/5 group-hover:border-white/20">
-                                  <Copy size={18} className="text-green-200" />
-                              </div>
-                           </div>
+                        <div className="flex items-center gap-4">
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <p className="text-xs text-gray-400 font-medium">24/7 Admin Support Ready</p>
                         </div>
                         
+                        <div className="pt-8 mt-8 border-t border-white/5">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Direct Support</p>
+                            <button 
+                                onClick={() => { navigator.clipboard.writeText("628995942945"); alert("Copied!"); }}
+                                className="w-full p-4 glass-card border-white/5 rounded-2xl flex items-center gap-4 hover:bg-white/5 transition-all group"
+                            >
+                                <div className="p-2 bg-green-500/20 rounded-xl text-green-400 group-hover:bg-green-500 group-hover:text-white transition-all">
+                                    <MessageCircle size={20} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase">WhatsApp</p>
+                                    <p className="text-sm font-bold text-white">+62 899 5942</p>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
-
       </div>
     </div>
   );

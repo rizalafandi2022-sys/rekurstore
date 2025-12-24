@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Download, Music, Video, MessageCircle, Wallet, ShieldCheck, Crown, CreditCard, Zap, Smartphone, Wifi } from 'lucide-react';
+import { Play, Download, Music, Video, MessageCircle, Wallet, ShieldCheck, Crown, Zap, Smartphone, Wifi, CreditCard } from 'lucide-react';
 
 interface HeroProps {
   onPPOBClick: (tabId: string) => void;
@@ -14,158 +14,138 @@ const Hero: React.FC<HeroProps> = ({ onPPOBClick }) => {
   };
 
   return (
-    <div className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+    <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
       
-      {/* Dynamic Background Elements mirroring the image */}
+      {/* Background Layer */}
+      <div className="grid-floor"></div>
+      
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        {/* Horizon Light */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-purple-500/20 rounded-full blur-[120px]"></div>
-        
-        {/* Floating 3D Icons (Left Side) */}
-        <div className="absolute top-32 left-[10%] animate-float icon-3d w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center transform rotate-[-15deg] opacity-80">
-          <Music className="text-white w-8 h-8 drop-shadow-md" />
-        </div>
-        <div className="absolute bottom-40 left-[5%] animate-float-delayed icon-3d w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center transform rotate-[10deg] opacity-70">
-          <Play className="text-white w-5 h-5 drop-shadow-md" />
-        </div>
-        <div className="absolute top-60 left-[20%] animate-float-slow icon-3d w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center transform rotate-[-5deg] opacity-60">
-           <Zap className="text-white w-5 h-5" />
-        </div>
-
-        {/* Floating 3D Icons (Right Side) */}
-        <div className="absolute top-40 right-[15%] animate-float-delayed icon-3d w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl flex items-center justify-center transform rotate-[15deg] opacity-80">
-          <Wallet className="text-white w-10 h-10 drop-shadow-md" />
-        </div>
-        <div className="absolute bottom-48 right-[8%] animate-float icon-3d w-14 h-14 bg-gradient-to-br from-cyan-400 to-teal-500 rounded-2xl flex items-center justify-center transform rotate-[-10deg] opacity-70">
-          <MessageCircle className="text-white w-7 h-7 drop-shadow-md" />
-        </div>
-        <div className="absolute top-20 right-[5%] animate-float-slow icon-3d w-8 h-8 bg-gradient-to-br from-red-500 to-red-700 rounded-lg flex items-center justify-center transform rotate-[20deg] opacity-50">
-           <CreditCard className="text-white w-4 h-4" />
-        </div>
+        <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-full max-w-4xl aspect-square bg-purple-600/10 rounded-full blur-[160px] animate-slow-glow"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Text Content */}
-        <div className="text-center max-w-4xl mx-auto mb-16">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight drop-shadow-2xl text-glow">
-            Aplikasi Premium & <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">PPOB Instan</span>
+        {/* Floating Icons - More Subtle & Integrated */}
+        <div className="hidden lg:block">
+            <div className="absolute top-0 left-[5%] animate-float icon-3d w-14 h-14 glass-card rounded-2xl flex items-center justify-center rotate-[-12deg] opacity-60">
+                <Music className="text-blue-400 w-6 h-6" />
+            </div>
+            <div className="absolute top-40 left-[-2%] animate-float-slow icon-3d w-10 h-10 glass-card rounded-xl flex items-center justify-center rotate-[15deg] opacity-40">
+                <Zap className="text-yellow-400 w-4 h-4" />
+            </div>
+            <div className="absolute bottom-20 left-[10%] animate-float-delayed icon-3d w-12 h-12 glass-card rounded-2xl flex items-center justify-center rotate-[-5deg] opacity-50">
+                <ShieldCheck className="text-green-400 w-6 h-6" />
+            </div>
+            
+            <div className="absolute top-10 right-[5%] animate-float icon-3d w-16 h-16 glass-card rounded-3xl flex items-center justify-center rotate-[15deg] opacity-60">
+                <Crown className="text-yellow-500 w-8 h-8" />
+            </div>
+            <div className="absolute bottom-40 right-[0%] animate-float-slow icon-3d w-12 h-12 glass-card rounded-2xl flex items-center justify-center rotate-[-10deg] opacity-50">
+                <Smartphone className="text-purple-400 w-6 h-6" />
+            </div>
+        </div>
+
+        {/* Hero Text */}
+        <div className="text-center max-w-4xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400 mb-8 animate-fade-in">
+             <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+             </span>
+             Verified Digital Provider
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-extrabold mb-8 leading-[1.1] tracking-tight">
+            <span className="text-gradient drop-shadow-sm">RekurStore</span>
+            <br />
+            <span className="text-white/90 text-4xl md:text-6xl font-medium tracking-tight">Experience Premium.</span>
           </h1>
-          <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto font-light">
-            Gerbang Anda menuju alat digital berkualitas tinggi dan pembayaran tagihan instan.
+          
+          <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-normal leading-relaxed">
+            Penyedia layanan digital terpercaya untuk aplikasi premium dan top-up instan dengan sistem keamanan terenkripsi.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => scrollToSection('premium')} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-white font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-purple-500/30 flex items-center gap-2 border border-white/10">
-              <Download size={20} />
-              Jelajahi Aplikasi
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <button 
+              onClick={() => scrollToSection('premium')} 
+              className="group relative px-10 py-5 bg-white text-black font-bold text-lg rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)] overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span className="relative flex items-center gap-2">
+                <Download size={20} />
+                Jelajahi Store
+              </span>
             </button>
-            <button onClick={() => onPPOBClick('pulsa')} className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-white font-bold text-lg hover:bg-white/10 transition-colors flex items-center gap-2">
-              <Wallet size={20} />
-              Top Up Sekarang
+            <button 
+              onClick={() => onPPOBClick('pulsa')} 
+              className="px-10 py-5 glass-card text-white font-bold text-lg rounded-2xl hover:bg-white/10 transition-all border-white/10 active:scale-95 flex items-center gap-2"
+            >
+              <Wallet size={20} className="text-blue-400" />
+              Top Up Instan
             </button>
           </div>
         </div>
 
-        {/* 3D Visual Mockup Area */}
-        <div className="relative h-[600px] md:h-[700px] w-full mt-10 perspective-[2000px]">
-          
-          {/* Central Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg aspect-square bg-purple-600/30 rounded-full blur-[100px] -z-20"></div>
+        {/* 3D Visual Mockup */}
+        <div className="relative h-[500px] md:h-[600px] w-full mt-10 perspective-[2000px] select-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg aspect-square bg-blue-600/10 rounded-full blur-[140px] -z-20"></div>
 
-          {/* Left Phone (Apps) */}
-          <div className="absolute top-10 left-0 md:left-[10%] w-[280px] h-[550px] bg-[#0a0a0a] rounded-[40px] border-[4px] border-gray-700 shadow-[0_0_50px_rgba(76,29,149,0.5)] transform rotate-[-15deg] hover:rotate-0 transition-transform duration-700 z-20 overflow-hidden ring-1 ring-white/20">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-xl z-30"></div>
-            {/* Screen Content */}
-            <div className="w-full h-full bg-gradient-to-b from-[#1a1a2e] to-[#16213e] p-4 pt-10 grid grid-cols-2 gap-4 content-start">
-               {/* App Icons simulated */}
-               <div className="aspect-square bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg"><Music className="text-white w-10 h-10" /></div>
-               <div className="aspect-square bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg"><Video className="text-white w-10 h-10" /></div>
-               <div className="aspect-square bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg"><Play className="text-white w-10 h-10" /></div>
-               <div className="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg"><MessageCircle className="text-white w-10 h-10" /></div>
-               <div className="col-span-2 mt-4 p-3 bg-white/5 rounded-xl backdrop-blur-sm border border-white/5">
-                  <div className="h-2 w-2/3 bg-white/20 rounded mb-2"></div>
+          {/* Phone Left */}
+          <div className="absolute top-10 left-[5%] md:left-[15%] w-[260px] h-[520px] bg-[#050505] rounded-[45px] border-[6px] border-[#1a1a1a] shadow-2xl transform rotate-[-12deg] hover:rotate-[-5deg] transition-all duration-700 z-20 overflow-hidden ring-1 ring-white/10">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-40"></div>
+            <div className="w-full h-full bg-gradient-to-b from-[#0f172a] to-[#020617] p-5 pt-12 space-y-4">
+               <div className="h-32 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 flex flex-col justify-end">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg mb-2"></div>
                   <div className="h-2 w-1/2 bg-white/20 rounded"></div>
                </div>
-               <div className="aspect-video col-span-2 bg-cover bg-center rounded-xl mt-2 opacity-80" style={{backgroundImage: 'url(https://picsum.photos/300/150?random=4)'}}></div>
+               <div className="grid grid-cols-2 gap-3">
+                  <div className="aspect-square glass-card rounded-xl flex items-center justify-center"><Music className="text-white/40" /></div>
+                  <div className="aspect-square glass-card rounded-xl flex items-center justify-center"><Video className="text-white/40" /></div>
+                  <div className="aspect-square glass-card rounded-xl flex items-center justify-center"><Zap className="text-white/40" /></div>
+                  <div className="aspect-square glass-card rounded-xl flex items-center justify-center"><Smartphone className="text-white/40" /></div>
+               </div>
             </div>
           </div>
 
-          {/* Right Phone (PPOB/Wallet) */}
-          <div className="absolute top-20 right-0 md:right-[10%] w-[280px] h-[550px] bg-[#0a0a0a] rounded-[40px] border-[4px] border-gray-700 shadow-[0_0_50px_rgba(59,130,246,0.5)] transform rotate-[15deg] hover:rotate-0 transition-transform duration-700 z-20 overflow-hidden ring-1 ring-white/20">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-xl z-30"></div>
-            {/* Screen Content - Wallet UI */}
-            <div className="w-full h-full bg-[#050511] relative p-6 pt-12 flex flex-col">
-              <div className="flex justify-between items-center mb-6">
-                <div className="text-white font-bold">Dompet Saya</div>
-                <div className="w-8 h-8 rounded-full bg-gray-700"></div>
+          {/* Phone Right */}
+          <div className="absolute top-20 right-[5%] md:right-[15%] w-[260px] h-[520px] bg-[#050505] rounded-[45px] border-[6px] border-[#1a1a1a] shadow-2xl transform rotate-[12deg] hover:rotate-[5deg] transition-all duration-700 z-20 overflow-hidden ring-1 ring-white/10">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-40"></div>
+            <div className="w-full h-full bg-[#030303] p-6 pt-12 flex flex-col">
+              <div className="flex justify-between items-center mb-8">
+                <div className="h-2 w-20 bg-white/10 rounded"></div>
+                <div className="w-6 h-6 rounded-full bg-white/10"></div>
               </div>
-              
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-5 mb-6 shadow-lg">
-                <p className="text-blue-100 text-xs mb-1">Total Saldo</p>
-                <h3 className="text-white text-2xl font-bold">Rp 1.500.000</h3>
-                <div className="mt-4 flex gap-4 text-white/80">
-                   <CreditCard size={16} /> <Wallet size={16} />
-                </div>
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-5 mb-8">
+                 <div className="h-2 w-12 bg-white/20 rounded mb-2"></div>
+                 <div className="h-6 w-3/4 bg-white/40 rounded"></div>
               </div>
-
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                 <button onClick={() => onPPOBClick('pulsa')} className="aspect-square bg-white/5 hover:bg-white/20 active:scale-95 transition-all rounded-xl flex items-center justify-center flex-col gap-1 cursor-pointer">
-                   <Smartphone size={16} className="text-blue-400" />
-                   <span className="text-[8px] text-gray-400">Pulsa</span>
-                 </button>
-                 <button onClick={() => onPPOBClick('pln')} className="aspect-square bg-white/5 hover:bg-white/20 active:scale-95 transition-all rounded-xl flex items-center justify-center flex-col gap-1 cursor-pointer">
-                   <Zap size={16} className="text-yellow-400" />
-                   <span className="text-[8px] text-gray-400">PLN</span>
-                 </button>
-                 <button onClick={() => onPPOBClick('internet')} className="aspect-square bg-white/5 hover:bg-white/20 active:scale-95 transition-all rounded-xl flex items-center justify-center flex-col gap-1 cursor-pointer">
-                   <Wifi size={16} className="text-green-400" />
-                   <span className="text-[8px] text-gray-400">Data</span>
-                 </button>
-                 <button onClick={() => onPPOBClick('ewallet')} className="aspect-square bg-white/5 hover:bg-white/20 active:scale-95 transition-all rounded-xl flex items-center justify-center flex-col gap-1 cursor-pointer">
-                   <Wallet size={16} className="text-purple-400" />
-                   <span className="text-[8px] text-gray-400">E-Wallet</span>
-                 </button>
+              <div className="grid grid-cols-4 gap-3">
+                 {[...Array(8)].map((_, i) => (
+                   <div key={i} className="aspect-square bg-white/5 rounded-lg"></div>
+                 ))}
               </div>
-              
-              <div className="space-y-3">
-                 <div className="h-10 bg-white/5 rounded-lg w-full"></div>
-                 <div className="h-10 bg-white/5 rounded-lg w-full"></div>
-                 <div className="h-10 bg-white/5 rounded-lg w-full"></div>
-              </div>
-
             </div>
           </div>
-
         </div>
 
-        {/* Feature Cards Strip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-30 mt-[-50px] md:mt-[-100px]">
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-30 mt-[-50px]">
           <FeatureCard 
-            icon={<Crown className="w-8 h-8 text-yellow-400" />}
-            title="Aplikasi Premium"
-            description="Akses aplikasi berbayar terbaik secara gratis!"
-            bgClass="bg-[#1e1e40]/60"
-            borderClass="border-white/10"
+            icon={<Crown className="w-6 h-6 text-yellow-500" />}
+            title="Premium Access"
+            description="Buka fitur berbayar tanpa batas."
             onClick={() => scrollToSection('premium')}
           />
            <FeatureCard 
-            icon={<Wallet className="w-8 h-8 text-green-400" />}
-            title="PPOB Instan"
-            description="Isi pulsa, data, dan e-money secara instan."
-            bgClass="bg-[#1e1e40]/60"
-            borderClass="border-white/10"
+            icon={<Zap className="w-6 h-6 text-blue-400" />}
+            title="Flash Delivery"
+            description="Sistem pengiriman otomatis 24/7."
             onClick={() => onPPOBClick('pulsa')}
           />
            <FeatureCard 
-            icon={<ShieldCheck className="w-8 h-8 text-blue-400" />}
-            title="Aman & Terpercaya"
-            description="Transaksi 100% Aman."
-            bgClass="bg-[#1e1e40]/60"
-            borderClass="border-white/10"
+            icon={<ShieldCheck className="w-6 h-6 text-green-400" />}
+            title="Secure Payment"
+            description="Enkripsi keamanan tingkat tinggi."
             onClick={() => scrollToSection('root')}
           />
         </div>
@@ -175,17 +155,17 @@ const Hero: React.FC<HeroProps> = ({ onPPOBClick }) => {
   );
 };
 
-const FeatureCard = ({ icon, title, description, bgClass, borderClass, onClick }: any) => (
+const FeatureCard = ({ icon, title, description, onClick }: any) => (
   <div 
     onClick={onClick}
-    className={`p-6 rounded-2xl backdrop-blur-md border ${bgClass} ${borderClass} shadow-xl flex items-center gap-4 hover:-translate-y-2 transition-transform duration-300 cursor-pointer group`}
+    className="glass-card p-6 rounded-3xl group cursor-pointer hover:-translate-y-2 transition-all duration-500 flex items-center gap-5 hover:bg-white/[0.05] border-white/5"
   >
-    <div className="p-3 bg-white/5 rounded-xl border border-white/5 shadow-inner group-hover:bg-white/10 transition-colors">
+    <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 group-hover:border-blue-500/50 transition-all duration-500 shadow-inner">
       {icon}
     </div>
     <div>
-      <h3 className="text-white font-bold text-lg">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
+      <h3 className="text-white font-bold text-lg tracking-tight group-hover:text-blue-400 transition-colors">{title}</h3>
+      <p className="text-gray-400 text-sm font-medium">{description}</p>
     </div>
   </div>
 );
