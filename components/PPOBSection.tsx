@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, Globe, Gamepad2 } from 'lucide-react';
+import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, Globe, Gamepad2, Landmark } from 'lucide-react';
 
 const CATEGORIES = [
   {
@@ -232,29 +232,33 @@ const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy
                             <CreditCard className="text-white" />
                         </div>
                         <h4 className="text-2xl font-bold text-white mb-2">Metode Pembayaran</h4>
-                        <p className="text-gray-400 text-sm mb-6">Nikmati kemudahan bertransaksi dengan berbagai pilihan pembayaran otomatis.</p>
+                        <p className="text-gray-400 text-sm mb-6">Nikmati kemudahan bertransaksi dengan berbagai pilihan pembayaran otomatis dan manual.</p>
                         
                         <div className="space-y-4 mb-8">
                             <div className="flex items-center gap-3 text-sm text-gray-300">
                                 <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> 
-                                <span>QRIS (Scan Langsung)</span>
+                                <span>QRIS (All Payment)</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm text-gray-300">
                                 <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"></div> 
-                                <span>Virtual Account Bank</span>
+                                <span>Transfer Bank (BCA, Mandiri, BRI)</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm text-gray-300">
                                 <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_#a855f7]"></div> 
-                                <span>E-Wallet Otomatis</span>
+                                <span>E-Wallet (Dana, OVO, Gopay, Shopee)</span>
                             </div>
                         </div>
 
-                        <div className="pt-6 border-t border-white/10 flex gap-3 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                        <div className="pt-6 border-t border-white/10 grid grid-cols-4 gap-2 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
                             {/* Payment Logos Placeholders */}
-                            <div className="h-8 w-12 bg-white/20 rounded-md flex items-center justify-center text-[8px] font-bold text-black/50 bg-white">QRIS</div>
-                            <div className="h-8 w-12 bg-blue-600/80 rounded-md flex items-center justify-center text-[8px] font-bold text-white">BCA</div>
-                            <div className="h-8 w-12 bg-blue-400/80 rounded-md flex items-center justify-center text-[8px] font-bold text-white">DANA</div>
-                            <div className="h-8 w-12 bg-green-500/80 rounded-md flex items-center justify-center text-[8px] font-bold text-white">GOPAY</div>
+                            <div className="h-8 bg-white/10 rounded flex items-center justify-center text-[7px] font-bold text-white">QRIS</div>
+                            <div className="h-8 bg-blue-700 rounded flex items-center justify-center text-[7px] font-bold text-white">BCA</div>
+                            <div className="h-8 bg-blue-900 rounded flex items-center justify-center text-[7px] font-bold text-white">MANDIRI</div>
+                            <div className="h-8 bg-blue-600 rounded flex items-center justify-center text-[7px] font-bold text-white">BRI</div>
+                            <div className="h-8 bg-blue-400 rounded flex items-center justify-center text-[7px] font-bold text-white">DANA</div>
+                            <div className="h-8 bg-purple-600 rounded flex items-center justify-center text-[7px] font-bold text-white">OVO</div>
+                            <div className="h-8 bg-green-500 rounded flex items-center justify-center text-[7px] font-bold text-white">GOPAY</div>
+                            <div className="h-8 bg-orange-500 rounded flex items-center justify-center text-[7px] font-bold text-white">SHOPEE</div>
                         </div>
                     </div>
                 </div>
