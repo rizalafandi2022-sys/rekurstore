@@ -28,13 +28,32 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  // Persistence: Check for session on mount
+  // Persistence and Scroll Observer
   useEffect(() => {
     window.scrollTo(0, 0);
     const savedSession = localStorage.getItem('rekurstore_session');
     if (savedSession) {
       setUser({ email: savedSession });
     }
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
   }, []);
 
   const handleHeroPPOBClick = (tabId: string) => {
@@ -74,17 +93,26 @@ const App: React.FC = () => {
       
       <main>
         <Hero onPPOBClick={handleHeroPPOBClick} />
-        <PremiumSelection onBuy={handleBuyProduct} />
-        <PPOBSection 
-          activeTab={activePPOBTab} 
-          onTabChange={setActivePPOBTab} 
-          onBuy={handleBuyProduct}
-        />
-        <ComingSoon />
+        
+        <div className="reveal">
+          <PremiumSelection onBuy={handleBuyProduct} />
+        </div>
+        
+        <div className="reveal">
+          <PPOBSection 
+            activeTab={activePPOBTab} 
+            onTabChange={setActivePPOBTab} 
+            onBuy={handleBuyProduct}
+          />
+        </div>
+        
+        <div className="reveal">
+          <ComingSoon />
+        </div>
       </main>
 
       <footer className="bg-[#02020a]/80 backdrop-blur-xl py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+        <div className="max-w-7xl auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
            <p>© 2024 Rekurstore. All rights reserved.</p>
            <div className="flex gap-6 mt-4 md:mt-0">
              <a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a>

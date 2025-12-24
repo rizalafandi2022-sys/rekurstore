@@ -165,9 +165,13 @@ const ProductCard: React.FC<{ product: Product; onBuy: (item: any) => void }> = 
 
         <button 
           onClick={() => onBuy({ name: displayName, price: displayPrice, category: product.category })}
-          className="w-full py-4 bg-white/5 hover:bg-white text-gray-300 hover:text-black font-bold rounded-2xl border border-white/10 hover:border-white transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 group/btn"
+          className="w-full py-4 bg-white/5 hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 text-gray-300 hover:text-white font-bold rounded-2xl border border-white/10 hover:border-white/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 group/btn"
         >
-          Get Started <ExternalLink size={16} className="opacity-50 group-hover/btn:opacity-100" />
+          Get Started 
+          <ExternalLink 
+            size={16} 
+            className="opacity-50 group-hover/btn:opacity-100 group-hover/btn:scale-110 group-hover/btn:translate-x-0.5 transition-all duration-300" 
+          />
         </button>
       </div>
     </div>
