@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, Key, ArrowRight, User, ShieldCheck, Loader2 } from 'lucide-react';
+import { X, Mail, Lock, Key, ArrowRight, ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -8,6 +8,11 @@ interface AuthModalProps {
 }
 
 type AuthMode = 'login' | 'register' | 'verify';
+
+interface UserData {
+  email: string;
+  password: string;
+}
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -20,15 +25,36 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
   if (!isOpen) return null;
 
+  // Helper to get all users from localStorage
+  const getStoredUsers = (): UserData[] => {
+    const users = localStorage.getItem('rekurstore_users');
+    return users ? JSON.parse(users) : [];
+  };
+
+  // Helper to save a new user
+  const saveUser = (newEmail: string, pass: string) => {
+    const users = getStoredUsers();
+    users.push({ email: newEmail, password: pass });
+    localStorage.setItem('rekurstore_users', JSON.stringify(users));
+  };
+
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-        setError('Harap isi email terlebih dahulu');
-        return;
+    setError('');
+
+    if (!email || !password) {
+      setError('Email dan kata sandi wajib diisi');
+      return;
+    }
+
+    // Check if user already exists
+    const users = getStoredUsers();
+    if (users.find(u => u.email === email)) {
+      setError('Email ini sudah terdaftar. Silakan login.');
+      return;
     }
     
     setIsLoading(true);
-    setError('');
 
     // Simulate API Call to send email
     setTimeout(() => {
@@ -36,16 +62,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
         setGeneratedOtp(code);
         setIsLoading(false);
         setMode('verify');
-        // In a real app, this is sent to email. Here we alert it for demo.
         alert(`[SIMULASI EMAIL]\n\nTerima kasih telah mendaftar di RekurStore.\n\nKode Verifikasi Anda: ${code}\n\nKode ini diperlukan untuk memverifikasi alamat email Anda dan mengaktifkan akun agar dapat digunakan untuk bertransaksi.`);
     }, 1500);
   };
 
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     if (otp === generatedOtp) {
         setIsLoading(true);
         setTimeout(() => {
+            // Save user to "database"
+            saveUser(email, password);
+            localStorage.setItem('rekurstore_session', email);
             onLoginSuccess(email);
             setIsLoading(false);
             onClose();
@@ -57,18 +87,30 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     if (!email || !password) {
         setError('Email dan kata sandi wajib diisi');
         return;
     }
     
     setIsLoading(true);
-    // Simulate Login API
+
+    // Check credentials against localStorage
     setTimeout(() => {
-        setIsLoading(false);
-        onLoginSuccess(email);
-        onClose();
-    }, 1500);
+        const users = getStoredUsers();
+        const foundUser = users.find(u => u.email === email && u.password === password);
+
+        if (foundUser) {
+            localStorage.setItem('rekurstore_session', email);
+            onLoginSuccess(email);
+            setIsLoading(false);
+            onClose();
+        } else {
+            setIsLoading(false);
+            setError('Email atau kata sandi salah.');
+        }
+    }, 1200);
   };
 
   const resetState = () => {
@@ -117,7 +159,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
         {/* Form Body */}
         <div className="p-6 pt-4">
             {error && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs flex items-center gap-2 font-medium">
+                    <AlertCircle size={14} className="shrink-0" />
                     {error}
                 </div>
             )}
@@ -135,6 +178,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-[#050511] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                                 placeholder="nama@email.com"
+                                required
                             />
                         </div>
                     </div>
@@ -148,6 +192,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full bg-[#050511] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                                 placeholder="••••••••"
+                                required
                             />
                         </div>
                     </div>
@@ -198,6 +243,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full bg-[#050511] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                                 placeholder="••••••••"
+                                minLength={6}
                                 required
                             />
                         </div>

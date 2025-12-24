@@ -28,9 +28,13 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  // Scroll to top on load
+  // Persistence: Check for session on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    const savedSession = localStorage.getItem('rekurstore_session');
+    if (savedSession) {
+      setUser({ email: savedSession });
+    }
   }, []);
 
   const handleHeroPPOBClick = (tabId: string) => {
@@ -44,8 +48,6 @@ const App: React.FC = () => {
   const handleBuyProduct = (item: PurchaseItem) => {
     if (!user) {
         setIsAuthModalOpen(true);
-        // Optionally store the intended item to auto-open after login?
-        // For now, let's just make them log in first.
     } else {
         setPurchaseItem(item);
     }
@@ -57,6 +59,7 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('rekurstore_session');
     setUser(null);
   };
 
