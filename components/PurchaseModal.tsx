@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, MessageCircle, QrCode, Building2, Wallet, Copy, Banknote } from 'lucide-react';
+import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, MessageCircle, QrCode, Building2, Wallet, Copy, Banknote, Loader2 } from 'lucide-react';
 
 interface PurchaseData {
   name: string;
@@ -29,7 +29,7 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
   const [email, setEmail] = useState('');
   const [target, setTarget] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('QRIS');
-  const [step, setStep] = useState(1); // 1: Form, 2: Payment/Success
+  const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Success
   
   useEffect(() => {
     if (isOpen && data) {
@@ -68,7 +68,10 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
     }
   };
 
-  const handleSendWhatsApp = () => {
+  const handleConfirmPayment = () => {
+    // 1. Move to Success Step
+    setStep(3);
+
     const message = `
 Halo Admin *RekurStore Official* 👋,
 
@@ -88,7 +91,13 @@ Mohon diproses. Terima kasih!
     `.trim();
 
     const whatsappUrl = `https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+
+    // 2. Delay redirect to WhatsApp to show success animation
+    setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+        // Optional: Close modal after redirect or keep it open
+        // onClose(); 
+    }, 2500);
   };
 
   const paymentDetails = getPaymentDetails(paymentMethod);
@@ -104,99 +113,105 @@ Mohon diproses. Terima kasih!
       {/* Modal Content */}
       <div className="bg-[#121235] border border-white/10 w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200">
         
-        {/* Header */}
-        <div className="p-5 border-b border-white/10 flex justify-between items-center bg-[#0a0a20]">
-          <div>
-             <h3 className="font-bold text-lg text-white">Detail Pemesanan</h3>
-             <p className="text-xs text-gray-400">Lengkapi data untuk melanjutkan</p>
-          </div>
-          <button 
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-full hover:bg-white/10"
-          >
-            <X size={18} />
-          </button>
-        </div>
+        {/* Header (Hidden on Success Step for cleaner look) */}
+        {step !== 3 && (
+            <div className="p-5 border-b border-white/10 flex justify-between items-center bg-[#0a0a20]">
+            <div>
+                <h3 className="font-bold text-lg text-white">Detail Pemesanan</h3>
+                <p className="text-xs text-gray-400">Lengkapi data untuk melanjutkan</p>
+            </div>
+            <button 
+                onClick={onClose}
+                className="text-gray-400 hover:text-white transition-colors bg-white/5 p-2 rounded-full hover:bg-white/10"
+            >
+                <X size={18} />
+            </button>
+            </div>
+        )}
 
         {/* Body */}
         <div className="p-6 overflow-y-auto">
           
-          {/* Product Summary Card */}
-          <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-white/10 rounded-xl p-4 mb-6 flex justify-between items-center">
-             <div>
-               <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{data.category}</p>
-               <h4 className="font-bold text-white text-lg">{data.name}</h4>
-             </div>
-             <div className="text-right">
-               <p className="text-blue-400 font-bold text-lg">{data.price}</p>
-             </div>
-          </div>
-
-          {step === 1 ? (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Email Input */}
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <Mail size={12} /> Email Pengiriman
-                    </label>
-                    <input 
-                    type="email" 
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@email.com"
-                    className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
-                    />
+          {step === 1 && (
+            <>
+                {/* Product Summary Card */}
+                <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-white/10 rounded-xl p-4 mb-6 flex justify-between items-center">
+                    <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{data.category}</p>
+                    <h4 className="font-bold text-white text-lg">{data.name}</h4>
+                    </div>
+                    <div className="text-right">
+                    <p className="text-blue-400 font-bold text-lg">{data.price}</p>
+                    </div>
                 </div>
 
-                {/* Target Input */}
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <Smartphone size={12} /> 
-                    {data.category === 'PPOB' ? 'Nomor / ID' : 'WhatsApp'}
-                    </label>
-                    <input 
-                    type="text" 
-                    required
-                    value={target}
-                    onChange={(e) => setTarget(e.target.value)}
-                    placeholder={data.category === 'PPOB' ? "08xx / 123xx" : "08xx"}
-                    className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
-                    />
-                </div>
-              </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Email Input */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                        <Mail size={12} /> Email Pengiriman
+                        </label>
+                        <input 
+                        type="email" 
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="nama@email.com"
+                        className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
+                        />
+                    </div>
 
-              {/* Payment Methods Selection */}
-              <div className="space-y-3 pt-2">
-                 <label className="text-xs font-bold text-gray-300 uppercase tracking-wider">Pilih Metode Pembayaran</label>
-                 <div className="grid grid-cols-4 gap-2">
-                    {PAYMENT_METHODS.map((method) => (
-                        <div 
-                            key={method.id}
-                            onClick={() => setPaymentMethod(method.id)}
-                            className={`border rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer transition-all aspect-square text-center gap-1 ${paymentMethod === method.id ? 'bg-blue-600/20 border-blue-500 ring-1 ring-blue-500' : 'bg-[#050511] border-white/10 hover:bg-white/5 hover:border-white/30'}`}
-                        >
-                            <div className={`${paymentMethod === method.id ? 'text-white' : method.color}`}>
-                                {method.icon}
+                    {/* Target Input */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                        <Smartphone size={12} /> 
+                        {data.category === 'PPOB' ? 'Nomor / ID' : 'WhatsApp'}
+                        </label>
+                        <input 
+                        type="text" 
+                        required
+                        value={target}
+                        onChange={(e) => setTarget(e.target.value)}
+                        placeholder={data.category === 'PPOB' ? "08xx / 123xx" : "08xx"}
+                        className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
+                        />
+                    </div>
+                </div>
+
+                {/* Payment Methods Selection */}
+                <div className="space-y-3 pt-2">
+                    <label className="text-xs font-bold text-gray-300 uppercase tracking-wider">Pilih Metode Pembayaran</label>
+                    <div className="grid grid-cols-4 gap-2">
+                        {PAYMENT_METHODS.map((method) => (
+                            <div 
+                                key={method.id}
+                                onClick={() => setPaymentMethod(method.id)}
+                                className={`border rounded-lg p-2 flex flex-col items-center justify-center cursor-pointer transition-all aspect-square text-center gap-1 ${paymentMethod === method.id ? 'bg-blue-600/20 border-blue-500 ring-1 ring-blue-500' : 'bg-[#050511] border-white/10 hover:bg-white/5 hover:border-white/30'}`}
+                            >
+                                <div className={`${paymentMethod === method.id ? 'text-white' : method.color}`}>
+                                    {method.icon}
+                                </div>
+                                <span className={`text-[10px] font-bold leading-tight ${paymentMethod === method.id ? 'text-white' : 'text-gray-400'}`}>
+                                    {method.name}
+                                </span>
                             </div>
-                            <span className={`text-[10px] font-bold leading-tight ${paymentMethod === method.id ? 'text-white' : 'text-gray-400'}`}>
-                                {method.name}
-                            </span>
-                        </div>
-                    ))}
-                 </div>
-              </div>
+                        ))}
+                    </div>
+                </div>
 
-              <button 
-                type="submit"
-                className="w-full mt-6 py-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Lanjut ke Pembayaran <ChevronRight size={18} />
-              </button>
-            </form>
-          ) : (
+                <button 
+                    type="submit"
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                    Lanjut ke Pembayaran <ChevronRight size={18} />
+                </button>
+                </form>
+            </>
+          )} 
+          
+          {step === 2 && (
             <div className="text-center py-2">
                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 animate-pulse-slow">
                   <Banknote size={24} className="text-green-400" />
@@ -212,7 +227,7 @@ Mohon diproses. Terima kasih!
                   {paymentMethod === 'QRIS' ? (
                      <div className="flex flex-col items-center">
                         <div className="bg-white p-2 rounded-lg mb-3">
-                            {/* Simulate QR Code - In a real app, this would be a real QRIS string */}
+                            {/* Simulate QR Code */}
                             <div className="w-32 h-32 bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=RekurstorePayment')] bg-contain bg-no-repeat bg-center"></div>
                         </div>
                         <p className="text-xs text-gray-400">Scan menggunakan E-Wallet atau M-Banking apa saja.</p>
@@ -245,11 +260,11 @@ Mohon diproses. Terima kasih!
                {/* WhatsApp Confirmation Button */}
                <button 
                  type="button"
-                 onClick={handleSendWhatsApp}
+                 onClick={handleConfirmPayment}
                  className="mx-auto w-full relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.02] active:scale-95 shadow-green-900/20"
                >
                  <MessageCircle size={20} className="fill-white text-white" />
-                 Konfirmasi ke WhatsApp Admin
+                 Konfirmasi & Kirim Bukti
                </button>
                
                <p className="text-[10px] text-gray-500 mt-4 px-4 leading-tight">
@@ -258,22 +273,44 @@ Mohon diproses. Terima kasih!
 
                <div className="mt-4 pt-4 border-t border-white/10">
                  <button 
-                    onClick={onClose} 
+                    onClick={() => setStep(1)} 
                     className="text-gray-400 hover:text-white text-xs font-medium hover:underline transition-all"
                  >
-                    Batal / Tutup Jendela
+                    Kembali ke Detail Pesanan
                  </button>
                </div>
             </div>
           )}
 
+          {step === 3 && (
+              <div className="flex flex-col items-center justify-center py-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(34,197,94,0.4)] animate-bounce">
+                      <CheckCircle size={48} className="text-white" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Pesanan Berhasil!</h3>
+                  <p className="text-gray-300 mb-8 max-w-[80%] leading-relaxed">
+                      Terima kasih. Pesanan Anda telah tercatat di sistem kami. Anda akan segera diarahkan ke WhatsApp Admin untuk verifikasi pembayaran.
+                  </p>
+                  
+                  <div className="flex flex-col items-center gap-3 bg-white/5 px-6 py-4 rounded-xl border border-white/5">
+                    <div className="flex items-center gap-2 text-blue-400">
+                        <Loader2 size={20} className="animate-spin" />
+                        <span className="font-bold">Mengalihkan ke WhatsApp...</span>
+                    </div>
+                    <p className="text-xs text-gray-500">Mohon jangan tutup jendela ini.</p>
+                  </div>
+              </div>
+          )}
+
         </div>
         
-        {/* Footer Security */}
-        <div className="p-3 bg-[#0a0a20] border-t border-white/10 flex items-center justify-center gap-2 text-[10px] text-gray-500">
-           <Lock size={10} />
-           <span>Transaksi Anda dijamin aman & terenkripsi</span>
-        </div>
+        {/* Footer Security (Hidden on Success step) */}
+        {step !== 3 && (
+            <div className="p-3 bg-[#0a0a20] border-t border-white/10 flex items-center justify-center gap-2 text-[10px] text-gray-500">
+            <Lock size={10} />
+            <span>Transaksi Anda dijamin aman & terenkripsi</span>
+            </div>
+        )}
 
       </div>
     </div>
