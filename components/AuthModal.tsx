@@ -37,7 +37,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
         setIsLoading(false);
         setMode('verify');
         // In a real app, this is sent to email. Here we alert it for demo.
-        alert(`[SIMULASI EMAIL]\nKode Verifikasi Anda: ${code}\n\nMasukkan kode ini untuk mendaftar.`);
+        alert(`[SIMULASI EMAIL]\n\nTerima kasih telah mendaftar di RekurStore.\n\nKode Verifikasi Anda: ${code}\n\nKode ini diperlukan untuk memverifikasi alamat email Anda dan mengaktifkan akun agar dapat digunakan untuk bertransaksi.`);
     }, 1500);
   };
 
