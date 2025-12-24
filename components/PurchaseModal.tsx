@@ -32,12 +32,16 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
   const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Success
   const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Checkbox state
   
+  // Determine if the item is PPOB or Premium App
+  const isPPOB = data?.category === 'PPOB' || data?.category === 'Top Up';
+
   useEffect(() => {
     if (isOpen && data) {
       setTarget(data.prefilledTarget || '');
       setPaymentMethod('QRIS');
       setStep(1);
       setIsPaymentConfirmed(false);
+      setEmail('');
     }
   }, [isOpen, data]);
 
@@ -83,6 +87,10 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
     // 1. Move to Success Step
     setStep(3);
 
+    // Determine the target to display in WhatsApp
+    // If it's NOT PPOB (Premium App), the 'Target' is basically the Email/Account.
+    const finalTarget = isPPOB ? target : email;
+
     const message = `
 Halo Admin *RekurStore Official* 👋,
 
@@ -95,8 +103,8 @@ Saya ingin konfirmasi pembayaran pesanan baru:
 • Pembayaran via: ${paymentMethod}
 
 👤 *DATA PELANGGAN*
-• ID/Tujuan: ${target}
-• Email: ${email}
+• Email Akun: ${email}
+${isPPOB ? `• ID/Nomor Tujuan: ${target}` : `• Akun Tujuan: ${email}`}
 
 Mohon diproses. Terima kasih!
     `.trim();
@@ -108,7 +116,7 @@ Mohon diproses. Terima kasih!
         window.open(whatsappUrl, '_blank');
         // Optional: Close modal after redirect or keep it open
         // onClose(); 
-    }, 2500);
+    }, 3000);
   };
 
   const paymentDetails = getPaymentDetails(paymentMethod);
@@ -158,11 +166,11 @@ Mohon diproses. Terima kasih!
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className={`grid grid-cols-1 ${isPPOB ? 'md:grid-cols-2' : ''} gap-4`}>
                     {/* Email Input */}
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                        <Mail size={12} /> Email Pengiriman
+                        <Mail size={12} /> {isPPOB ? 'Email Pengiriman' : 'Email Akun Tujuan'}
                         </label>
                         <input 
                         type="email" 
@@ -174,22 +182,33 @@ Mohon diproses. Terima kasih!
                         />
                     </div>
 
-                    {/* Target Input */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                        <Smartphone size={12} /> 
-                        {data.category === 'PPOB' ? 'Nomor / ID' : 'WhatsApp'}
-                        </label>
-                        <input 
-                        type="text" 
-                        required
-                        value={target}
-                        onChange={(e) => setTarget(e.target.value)}
-                        placeholder={data.category === 'PPOB' ? "08xx / 123xx" : "08xx"}
-                        className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
-                        />
-                    </div>
+                    {/* Target Input (ONLY FOR PPOB) */}
+                    {isPPOB && (
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+                            <Smartphone size={12} /> Nomor / ID
+                            </label>
+                            <input 
+                            type="text" 
+                            required
+                            value={target}
+                            onChange={(e) => setTarget(e.target.value)}
+                            placeholder="08xx / 123xx"
+                            className="w-full bg-[#050511] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-600 text-sm"
+                            />
+                        </div>
+                    )}
                 </div>
+
+                {/* Warning Note for Premium Apps */}
+                {!isPPOB && (
+                    <div className="flex items-start gap-3 bg-red-500/10 p-3 rounded-xl border border-red-500/20">
+                        <AlertTriangle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-red-200 leading-relaxed font-medium">
+                           Pastikan email tujuan target valid. Jika target salah, hal tersebut bukan tanggung jawab kami.
+                        </p>
+                    </div>
+                )}
 
                 {/* Payment Methods Selection */}
                 <div className="space-y-3 pt-2">
@@ -216,7 +235,7 @@ Mohon diproses. Terima kasih!
                     type="submit"
                     className="w-full mt-6 py-4 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl font-bold text-white shadow-lg hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                 >
-                    Lanjut ke Pembayaran <ChevronRight size={18} />
+                    Lanjut ke Konfirmasi <ChevronRight size={18} />
                 </button>
                 </form>
             </>
@@ -268,7 +287,7 @@ Mohon diproses. Terima kasih!
                   )}
                </div>
 
-               {/* Verification Checkbox - New Addition */}
+               {/* Verification Checkbox */}
                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 mb-4 flex gap-3 items-start text-left">
                   <div className="pt-0.5">
                     <input 
@@ -280,7 +299,10 @@ Mohon diproses. Terima kasih!
                     />
                   </div>
                   <label htmlFor="payment-confirm" className="text-xs text-gray-300 cursor-pointer select-none leading-relaxed">
-                    Saya menyatakan bahwa saya <strong className="text-yellow-400">sudah melakukan transfer</strong> senilai total tagihan.
+                    {isPPOB 
+                        ? <>Saya menyatakan bahwa saya <strong className="text-yellow-400">sudah melakukan transfer</strong> senilai total tagihan.</>
+                        : <>Saya sudah mengecek email tujuan dan siap <strong className="text-yellow-400">konfirmasi ke Admin</strong> untuk diproses.</>
+                    }
                   </label>
                </div>
 
@@ -296,11 +318,11 @@ Mohon diproses. Terima kasih!
                    }`}
                >
                  <MessageCircle size={20} className={isPaymentConfirmed ? "fill-white text-white" : "text-gray-400"} />
-                 {isPaymentConfirmed ? "Konfirmasi & Kirim Bukti" : "Bayar Dulu Untuk Lanjut"}
+                 {isPaymentConfirmed ? "Konfirmasi & Kirim Bukti" : "Centang Konfirmasi Untuk Lanjut"}
                </button>
                
                <p className="text-[10px] text-gray-500 mt-4 px-4 leading-tight">
-                 Segera kirim bukti transfer ke Admin via WhatsApp untuk mempercepat proses transaksi Anda.
+                 Data pesanan Anda akan dikirimkan ke Admin via WhatsApp untuk diproses.
                </p>
 
                <div className="mt-4 pt-4 border-t border-white/10">
@@ -319,9 +341,9 @@ Mohon diproses. Terima kasih!
                   <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(34,197,94,0.4)] animate-bounce">
                       <CheckCircle size={48} className="text-white" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Pesanan Berhasil!</h3>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Terimakasih sudah order!</h3>
                   <p className="text-gray-300 mb-8 max-w-[80%] leading-relaxed">
-                      Terima kasih. Pesanan Anda telah tercatat di sistem kami. Anda akan segera diarahkan ke WhatsApp Admin untuk verifikasi pembayaran.
+                      Pesanan Anda telah tercatat. Anda akan segera diarahkan ke WhatsApp Admin untuk konfirmasi pembayaran dan aktivasi.
                   </p>
                   
                   <div className="flex flex-col items-center gap-3 bg-white/5 px-6 py-4 rounded-xl border border-white/5">
