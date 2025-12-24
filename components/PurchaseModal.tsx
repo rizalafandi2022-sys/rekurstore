@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, MessageCircle, QrCode, Building2, Wallet, Copy, Banknote, Loader2 } from 'lucide-react';
+import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, MessageCircle, QrCode, Building2, Wallet, Copy, Banknote, Loader2, AlertTriangle } from 'lucide-react';
 
 interface PurchaseData {
   name: string;
@@ -30,14 +30,23 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
   const [target, setTarget] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('QRIS');
   const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Success
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false); // Checkbox state
   
   useEffect(() => {
     if (isOpen && data) {
       setTarget(data.prefilledTarget || '');
       setPaymentMethod('QRIS');
       setStep(1);
+      setIsPaymentConfirmed(false);
     }
   }, [isOpen, data]);
+
+  // Reset checkbox when moving to payment step
+  useEffect(() => {
+    if (step === 2) {
+      setIsPaymentConfirmed(false);
+    }
+  }, [step]);
 
   if (!isOpen || !data) return null;
 
@@ -69,6 +78,8 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
   };
 
   const handleConfirmPayment = () => {
+    if (!isPaymentConfirmed) return;
+
     // 1. Move to Success Step
     setStep(3);
 
@@ -222,7 +233,7 @@ Mohon diproses. Terima kasih!
                </p>
                
                {/* Conditional Payment Display */}
-               <div className="bg-[#050511] border border-white/10 rounded-xl p-6 mb-6 relative overflow-hidden">
+               <div className="bg-[#050511] border border-white/10 rounded-xl p-6 mb-4 relative overflow-hidden">
                   
                   {paymentMethod === 'QRIS' ? (
                      <div className="flex flex-col items-center">
@@ -257,14 +268,35 @@ Mohon diproses. Terima kasih!
                   )}
                </div>
 
+               {/* Verification Checkbox - New Addition */}
+               <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 mb-4 flex gap-3 items-start text-left">
+                  <div className="pt-0.5">
+                    <input 
+                      type="checkbox" 
+                      id="payment-confirm"
+                      checked={isPaymentConfirmed}
+                      onChange={(e) => setIsPaymentConfirmed(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-600 bg-white/10 text-green-500 focus:ring-green-500/50 cursor-pointer"
+                    />
+                  </div>
+                  <label htmlFor="payment-confirm" className="text-xs text-gray-300 cursor-pointer select-none leading-relaxed">
+                    Saya menyatakan bahwa saya <strong className="text-yellow-400">sudah melakukan transfer</strong> senilai total tagihan.
+                  </label>
+               </div>
+
                {/* WhatsApp Confirmation Button */}
                <button 
                  type="button"
                  onClick={handleConfirmPayment}
-                 className="mx-auto w-full relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.02] active:scale-95 shadow-green-900/20"
+                 disabled={!isPaymentConfirmed}
+                 className={`mx-auto w-full relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg 
+                   ${isPaymentConfirmed 
+                      ? 'bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.02] active:scale-95 shadow-green-900/20 cursor-pointer' 
+                      : 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-70 grayscale'
+                   }`}
                >
-                 <MessageCircle size={20} className="fill-white text-white" />
-                 Konfirmasi & Kirim Bukti
+                 <MessageCircle size={20} className={isPaymentConfirmed ? "fill-white text-white" : "text-gray-400"} />
+                 {isPaymentConfirmed ? "Konfirmasi & Kirim Bukti" : "Bayar Dulu Untuk Lanjut"}
                </button>
                
                <p className="text-[10px] text-gray-500 mt-4 px-4 leading-tight">
