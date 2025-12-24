@@ -126,23 +126,22 @@ const ProductCard: React.FC<{ product: Product; onBuy: (item: any) => void }> = 
 
         {/* Variant Selectors */}
         {product.variants && (
-          <div className="flex p-1 bg-white/5 rounded-2xl border border-white/10 mb-6 gap-1">
+          <div className="flex p-1.5 bg-black/40 rounded-2xl border border-white/10 mb-6 gap-1.5 relative">
              {product.variants.map((v) => (
                 <button
                   key={v.id}
                   onClick={() => setActiveVariantId(v.id)}
-                  className={`relative flex-1 py-2.5 px-1 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
+                  className={`relative flex-1 py-3 px-1 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all duration-500 ${
                     activeVariantId === v.id 
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-[0_0_15px_rgba(124,58,237,0.4)] scale-[1.05] z-10' 
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    ? 'bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.5)] scale-[1.08] z-10 border border-white/40 ring-1 ring-white/20' 
+                    : 'text-gray-500 hover:text-gray-300 hover:bg-white/5 border border-transparent'
                   }`}
                 >
-                  {v.name}
+                  <span className="relative z-10">{v.name}</span>
                   {activeVariantId === v.id && (
-                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-white border border-purple-600"></span>
-                    </span>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-white text-black text-[7px] font-black rounded-full shadow-lg animate-bounce border border-purple-200">
+                      ACTIVE
+                    </div>
                   )}
                 </button>
              ))}
