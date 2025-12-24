@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, User as UserIcon, LogOut, LogIn } from 'lucide-react';
 
 interface NavbarProps {
   onOpenAI: () => void;
+  user: { email: string } | null;
+  onLoginClick: () => void;
+  onLogout: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onOpenAI }) => {
+const Navbar: React.FC<NavbarProps> = ({ onOpenAI, user, onLoginClick, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -44,31 +48,66 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenAI }) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-10 flex items-center space-x-6">
               <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="text-white hover:text-purple-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">Beranda</button>
               <button onClick={() => scrollToSection('premium')} className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Premium</button>
-              <button onClick={() => scrollToSection('apps')} className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Aplikasi</button>
               <button onClick={() => scrollToSection('ppob')} className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Top Up</button>
               
               <button 
                 onClick={onOpenAI}
-                className="flex items-center gap-2 text-purple-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors border border-purple-500/30 hover:bg-purple-500/10"
+                className="flex items-center gap-2 text-purple-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors border border-purple-500/30 hover:bg-purple-500/10 mr-4"
               >
                 <Sparkles size={16} />
                 Asisten AI
               </button>
 
-              <button 
-                onClick={() => scrollToSection('premium')}
-                className="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5"
-              >
-                Mulai
-              </button>
+              {user ? (
+                 <div className="relative">
+                    <button 
+                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full pl-2 pr-4 py-1.5 transition-all"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
+                            {user.email.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-xs text-gray-300 max-w-[100px] truncate">{user.email.split('@')[0]}</span>
+                    </button>
+                    
+                    {showUserMenu && (
+                        <div className="absolute right-0 mt-2 w-48 bg-[#1a1a40] border border-white/10 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+                             <div className="px-4 py-3 border-b border-white/5">
+                                 <p className="text-[10px] text-gray-400 uppercase tracking-wider">Akun</p>
+                                 <p className="text-sm text-white font-medium truncate">{user.email}</p>
+                             </div>
+                             <button 
+                                onClick={() => { onLogout(); setShowUserMenu(false); }}
+                                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 flex items-center gap-2"
+                             >
+                                <LogOut size={14} /> Keluar
+                             </button>
+                        </div>
+                    )}
+                 </div>
+              ) : (
+                <button 
+                    onClick={onLoginClick}
+                    className="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-full text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
+                >
+                    <LogIn size={16} />
+                    Masuk
+                </button>
+              )}
             </div>
           </div>
 
           {/* Mobile menu button */}
-          <div className="-mr-2 flex md:hidden">
+          <div className="-mr-2 flex md:hidden items-center gap-4">
+             {/* Mobile User Icon if logged in */}
+             {user && (
+                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
+                    {user.email.charAt(0).toUpperCase()}
+                </div>
+             )}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none"
@@ -89,16 +128,34 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenAI }) => {
             <button onClick={() => { setIsOpen(false); scrollToSection('ppob'); }} className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium text-left w-full">Top Up</button>
             <button 
               onClick={() => { onOpenAI(); setIsOpen(false); }}
-              className="w-full text-left text-purple-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              className="w-full text-left text-purple-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-2"
             >
-              Rekomendasi AI
+              <Sparkles size={16} /> Rekomendasi AI
             </button>
-             <button 
-                onClick={() => { setIsOpen(false); scrollToSection('premium'); }}
-                className="w-full mt-4 bg-white text-black px-5 py-3 rounded-lg font-bold"
-             >
-                Mulai
-              </button>
+            
+            <div className="border-t border-white/10 mt-4 pt-4">
+                {user ? (
+                    <>
+                        <div className="px-3 py-2 mb-2">
+                             <p className="text-[10px] text-gray-400 uppercase tracking-wider">Login sebagai</p>
+                             <p className="text-sm text-white font-medium truncate">{user.email}</p>
+                        </div>
+                        <button 
+                            onClick={() => { onLogout(); setIsOpen(false); }}
+                            className="w-full text-left text-red-400 block px-3 py-2 rounded-md text-base font-medium flex items-center gap-2"
+                        >
+                            <LogOut size={16} /> Keluar
+                        </button>
+                    </>
+                ) : (
+                    <button 
+                        onClick={() => { onLoginClick(); setIsOpen(false); }}
+                        className="w-full mt-2 bg-white text-black px-5 py-3 rounded-lg font-bold flex items-center justify-center gap-2"
+                    >
+                        <LogIn size={16} /> Masuk / Daftar
+                    </button>
+                )}
+            </div>
           </div>
         </div>
       )}

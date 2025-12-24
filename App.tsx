@@ -6,6 +6,7 @@ import PPOBSection from './components/PPOBSection';
 import ComingSoon from './components/ComingSoon';
 import AIModal from './components/AIModal';
 import PurchaseModal from './components/PurchaseModal';
+import AuthModal from './components/AuthModal';
 
 interface PurchaseItem {
   name: string;
@@ -14,10 +15,18 @@ interface PurchaseItem {
   prefilledTarget?: string;
 }
 
+interface User {
+  email: string;
+}
+
 const App: React.FC = () => {
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [purchaseItem, setPurchaseItem] = useState<PurchaseItem | null>(null);
   const [activePPOBTab, setActivePPOBTab] = useState('pulsa');
+  
+  // Auth State
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Scroll to top on load
   useEffect(() => {
@@ -33,12 +42,32 @@ const App: React.FC = () => {
   };
 
   const handleBuyProduct = (item: PurchaseItem) => {
-    setPurchaseItem(item);
+    if (!user) {
+        setIsAuthModalOpen(true);
+        // Optionally store the intended item to auto-open after login?
+        // For now, let's just make them log in first.
+    } else {
+        setPurchaseItem(item);
+    }
+  };
+
+  const handleLoginSuccess = (email: string) => {
+    setUser({ email });
+    setIsAuthModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
   };
 
   return (
     <div className="min-h-screen font-sans selection:bg-purple-500/30 selection:text-purple-200">
-      <Navbar onOpenAI={() => setIsAIModalOpen(true)} />
+      <Navbar 
+        onOpenAI={() => setIsAIModalOpen(true)} 
+        user={user}
+        onLoginClick={() => setIsAuthModalOpen(true)}
+        onLogout={handleLogout}
+      />
       
       <main>
         <Hero onPPOBClick={handleHeroPPOBClick} />
@@ -67,6 +96,12 @@ const App: React.FC = () => {
         onClose={() => setIsAIModalOpen(false)} 
       />
       
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
+
       <PurchaseModal 
         isOpen={!!purchaseItem}
         onClose={() => setPurchaseItem(null)}
