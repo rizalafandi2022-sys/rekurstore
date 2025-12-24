@@ -14,6 +14,7 @@ interface Product {
   image: string;
   bgImage?: string; // Optional background image for the header
   isPopular?: boolean;
+  invertIcon?: boolean; // New flag to handle black logos on dark background
 }
 
 const PRODUCTS: Product[] = [
@@ -55,6 +56,7 @@ const PRODUCTS: Product[] = [
     gradient: 'from-emerald-500 to-teal-700',
     image: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
     isPopular: true,
+    invertIcon: true, // The SVG is black, we need white for the dark card
   },
   {
     id: 'youtube',
@@ -78,7 +80,8 @@ const PRODUCTS: Product[] = [
     description: 'Fitur pengeditan video canggih dan efek untuk kreator.',
     features: ['Efek Pro', 'Penyimpanan Awan', 'Tanpa Watermark', 'Efek Tubuh'],
     gradient: 'from-slate-700 to-black',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Capcut_logo.svg/1200px-Capcut_logo.svg.png',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Capcut_logo.svg',
+    invertIcon: true, // Often black logo
   },
 ];
 
@@ -129,7 +132,11 @@ const PremiumSelection: React.FC<PremiumSelectionProps> = ({ onBuy }) => {
 
                 {/* Main Icon Container - Glassmorphism */}
                 <div className="relative z-10 w-24 h-24 bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/20 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center group-hover:shadow-white/20 group-hover:border-white/40">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-contain drop-shadow-md" />
+                    <img 
+                      src={product.image} 
+                      alt={product.name} 
+                      className={`w-full h-full object-contain drop-shadow-md ${product.invertIcon ? 'invert brightness-0 bg-transparent' : ''}`} 
+                    />
                 </div>
 
                 {/* Category Tag */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, Send, Check, Loader2 } from 'lucide-react';
+import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, Send, ExternalLink } from 'lucide-react';
 
 interface PurchaseData {
   name: string;
@@ -17,18 +17,12 @@ interface PurchaseModalProps {
 const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) => {
   const [email, setEmail] = useState('');
   const [target, setTarget] = useState('');
-  const [step, setStep] = useState(1); // 1: Form, 2: Payment/Success Simulation
+  const [step, setStep] = useState(1); // 1: Form, 2: Payment/Success
   
-  // State for email test simulation
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [emailSentStatus, setEmailSentStatus] = useState<'idle' | 'success'>('idle');
-
   useEffect(() => {
     if (isOpen && data) {
       setTarget(data.prefilledTarget || '');
       setStep(1);
-      setEmailSentStatus('idle'); // Reset email status on open
-      setIsSendingEmail(false);
     }
   }, [isOpen, data]);
 
@@ -36,27 +30,37 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStep(2); // Simulate proceeding to payment
+    setStep(2); // Proceed to payment view
   };
 
-  const handleTestEmail = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent any default behavior
-    e.stopPropagation();
+  const handleSendRealEmail = () => {
+    // Construct the email body with real order details
+    const subject = encodeURIComponent(`Konfirmasi Pembayaran: ${data.name}`);
+    const body = encodeURIComponent(`
+Halo Admin Rekurstore,
 
-    if (isSendingEmail) return;
-    
-    setIsSendingEmail(true);
-    
-    // Simulate network delay for sending email
-    setTimeout(() => {
-      setIsSendingEmail(false);
-      setEmailSentStatus('success');
-      
-      // Reset back to idle after 3 seconds so user can try again if needed
-      setTimeout(() => {
-        setEmailSentStatus('idle');
-      }, 3000);
-    }, 2000);
+Saya telah melakukan pembayaran untuk pesanan berikut:
+
+--------------------------------
+DETAIL PESANAN
+--------------------------------
+Produk    : ${data.name}
+Harga     : ${data.price}
+Kategori  : ${data.category}
+
+--------------------------------
+DATA PELANGGAN
+--------------------------------
+Email     : ${email}
+ID/Nomor  : ${target}
+
+Mohon segera diproses. Berikut saya lampirkan bukti pembayaran (jika ada).
+
+Terima kasih.
+    `);
+
+    // Open the user's default email client
+    window.location.href = `mailto:admin@rekurstore.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -162,9 +166,9 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
                   <CheckCircle size={32} className="text-green-500" />
                </div>
-               <h3 className="text-xl font-bold text-white mb-2">Pesanan Dibuat!</h3>
+               <h3 className="text-xl font-bold text-white mb-2">Menunggu Pembayaran</h3>
                <p className="text-gray-400 text-sm mb-6 max-w-[80%] mx-auto">
-                 Silakan selesaikan pembayaran QRIS di bawah. Invoice akan otomatis dikirim ke <b>{email || 'email Anda'}</b>.
+                 Silakan scan QRIS di bawah ini. Setelah membayar, klik tombol konfirmasi untuk mengirim detail ke Admin.
                </p>
                
                <div className="p-4 bg-white rounded-xl mb-8 mx-auto w-48 h-48 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer">
@@ -177,45 +181,21 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
                   </div>
                </div>
 
-               {/* Test Email Button - Enhanced */}
+               {/* Real Email Button */}
                <button 
                  type="button"
-                 onClick={handleTestEmail}
-                 disabled={isSendingEmail || emailSentStatus === 'success'}
-                 className={`mx-auto relative z-10 flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all transform shadow-lg ${
-                   emailSentStatus === 'success' 
-                     ? 'bg-green-500 text-white cursor-default scale-100' 
-                     : isSendingEmail 
-                        ? 'bg-gray-700 text-gray-300 cursor-wait'
-                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/50 hover:scale-105 active:scale-95'
-                 }`}
+                 onClick={handleSendRealEmail}
+                 className="mx-auto w-full max-w-xs relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/50 hover:scale-105 active:scale-95"
                >
-                 {isSendingEmail ? (
-                   <>
-                     <Loader2 size={16} className="animate-spin" />
-                     Mengirim Invoice...
-                   </>
-                 ) : emailSentStatus === 'success' ? (
-                   <>
-                     <Check size={16} />
-                     Invoice Terkirim!
-                   </>
-                 ) : (
-                   <>
-                     <Send size={16} />
-                     Kirim Test Invoice ke Email
-                   </>
-                 )}
+                 <Send size={18} />
+                 Konfirmasi Pembayaran via Email
                </button>
-                
-               {/* Reset/Try Again Link (optional UX improvement) */}
-               {emailSentStatus === 'success' && (
-                 <p className="text-[10px] text-gray-500 mt-2 animate-fade-in">
-                   Tombol akan aktif kembali dalam 3 detik
-                 </p>
-               )}
+               
+               <p className="text-[10px] text-gray-500 mt-4">
+                 Tombol ini akan membuka aplikasi email Anda untuk mengirim detail pesanan ke Admin.
+               </p>
 
-               <div className="mt-8 border-t border-white/10 pt-4">
+               <div className="mt-6 border-t border-white/10 pt-4">
                  <button 
                     onClick={onClose} 
                     className="text-gray-400 hover:text-white text-sm font-medium hover:underline transition-all"
