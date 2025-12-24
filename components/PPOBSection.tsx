@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, Globe, Gamepad2, Landmark } from 'lucide-react';
+import { Smartphone, Zap, Wifi, Wallet, ChevronRight, CreditCard, Search, Globe, Gamepad2, Landmark, Copy, MessageCircle } from 'lucide-react';
 
 const CATEGORIES = [
   {
@@ -128,6 +128,11 @@ const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy
     });
   };
 
+  const handleCopyAdmin = () => {
+    navigator.clipboard.writeText("628995942945");
+    alert("Nomor Admin berhasil disalin!");
+  };
+
   return (
     <div className="py-20 bg-[#050511] relative" id="ppob">
         {/* Background Decorative */}
@@ -227,7 +232,7 @@ const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy
                 <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-8 border-t lg:border-t-0 lg:border-l border-white/5 flex flex-col justify-center relative overflow-hidden">
                     <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                     
-                    <div className="relative z-10">
+                    <div className="relative z-10 flex flex-col h-full">
                         <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-4 backdrop-blur-md">
                             <CreditCard className="text-white" />
                         </div>
@@ -249,7 +254,7 @@ const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy
                             </div>
                         </div>
 
-                        <div className="pt-6 border-t border-white/10 grid grid-cols-4 gap-2 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
+                        <div className="grid grid-cols-4 gap-2 opacity-80 grayscale hover:grayscale-0 transition-all duration-500 mb-auto">
                             {/* Payment Logos Placeholders */}
                             <div className="h-8 bg-white/10 rounded flex items-center justify-center text-[7px] font-bold text-white">QRIS</div>
                             <div className="h-8 bg-blue-700 rounded flex items-center justify-center text-[7px] font-bold text-white">BCA</div>
@@ -260,6 +265,31 @@ const PPOBSection: React.FC<PPOBSectionProps> = ({ activeTab, onTabChange, onBuy
                             <div className="h-8 bg-green-500 rounded flex items-center justify-center text-[7px] font-bold text-white">GOPAY</div>
                             <div className="h-8 bg-orange-500 rounded flex items-center justify-center text-[7px] font-bold text-white">SHOPEE</div>
                         </div>
+
+                        {/* Admin Contact Highlight */}
+                        <div className="mt-8 pt-6 border-t border-white/10 w-full">
+                           <p className="text-xs text-center text-blue-200 mb-3 font-medium uppercase tracking-wider">
+                              Kendala Pembayaran?
+                           </p>
+                           <div 
+                              onClick={handleCopyAdmin}
+                              className="flex items-center justify-between bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 cursor-pointer hover:bg-green-500/30 transition-all group shadow-lg shadow-green-900/10"
+                           >
+                              <div className="flex items-center gap-3">
+                                  <div className="p-2 bg-green-500 rounded-lg text-white shadow-lg shadow-green-500/20">
+                                      <MessageCircle size={20} fill="white" />
+                                  </div>
+                                  <div>
+                                      <p className="text-[10px] text-green-300 font-bold leading-tight">WHATSAPP ADMIN</p>
+                                      <p className="text-lg font-bold text-white tracking-wide font-mono">+62 899-5942-945</p>
+                                  </div>
+                              </div>
+                              <div className="p-2 bg-white/5 rounded-lg group-hover:bg-white/20 transition-colors border border-white/5 group-hover:border-white/20">
+                                  <Copy size={18} className="text-green-200" />
+                              </div>
+                           </div>
+                        </div>
+                        
                     </div>
                 </div>
 

@@ -142,7 +142,7 @@ const ProductCard: React.FC<{ product: Product; onBuy: PremiumSelectionProps['on
 
   return (
     <div 
-      className="relative group bg-[#0f0f2d] border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-300 hover:-translate-y-2 flex flex-col shadow-2xl shadow-black/50"
+      className="relative group bg-[#0f0f2d] border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-300 hover:-translate-y-2 flex flex-col h-full shadow-2xl shadow-black/50"
     >
       {/* Popular Badge */}
       {product.isPopular && (
@@ -152,7 +152,7 @@ const ProductCard: React.FC<{ product: Product; onBuy: PremiumSelectionProps['on
       )}
 
       {/* Header with Centered App Icon */}
-      <div className={`h-48 relative flex items-center justify-center overflow-hidden bg-gradient-to-br ${product.gradient}`}>
+      <div className={`h-40 sm:h-48 relative flex items-center justify-center overflow-hidden bg-gradient-to-br ${product.gradient} shrink-0`}>
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
@@ -161,7 +161,7 @@ const ProductCard: React.FC<{ product: Product; onBuy: PremiumSelectionProps['on
         <div className="absolute top-[-50%] left-[-50%] w-full h-full bg-white/10 rotate-45 transform origin-bottom-right blur-3xl transition-transform duration-700 group-hover:rotate-90"></div>
 
         {/* Main Icon Container - Glassmorphism */}
-        <div className="relative z-10 w-24 h-24 bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/20 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center group-hover:shadow-white/20 group-hover:border-white/40">
+        <div className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 bg-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white/20 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center group-hover:shadow-white/20 group-hover:border-white/40">
             <img 
               src={product.image} 
               alt={product.name} 
@@ -178,40 +178,43 @@ const ProductCard: React.FC<{ product: Product; onBuy: PremiumSelectionProps['on
       </div>
 
       {/* Content */}
-      <div className="p-6 flex-1 flex flex-col relative">
+      <div className="p-5 sm:p-6 flex-1 flex flex-col relative">
         {/* Glow effect from top */}
         <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${product.gradient} opacity-50`}></div>
 
-        <div className="flex justify-between items-start mb-2">
-           <h3 className="text-xl font-bold text-white tracking-tight">{displayName}</h3>
+        <div className="flex justify-between items-start mb-2 min-h-[1.75rem]">
+           <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-tight">{displayName}</h3>
         </div>
         
-        {/* Variant Selectors (Pills) */}
+        {/* Variant Selectors (Pills) - Optimized for Mobile & Desktop */}
         {product.variants && (
-          <div className="flex gap-2 mb-4 bg-black/20 p-1 rounded-lg border border-white/5">
-            {product.variants.map((v) => (
-              <button
-                key={v.id}
-                onClick={(e) => { e.stopPropagation(); setActiveVariantId(v.id); }}
-                className={`flex-1 py-1.5 px-2 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
-                  activeVariantId === v.id 
-                    ? `bg-gradient-to-r ${product.gradient} text-white shadow-md` 
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {v.name}
-              </button>
-            ))}
+          <div className="w-full mb-5">
+            <div className="flex w-full p-1 bg-black/40 rounded-xl border border-white/10 gap-1">
+                {product.variants.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={(e) => { e.stopPropagation(); setActiveVariantId(v.id); }}
+                    className={`
+                      flex-1 py-2 px-1 rounded-lg text-[10px] sm:text-xs font-bold uppercase tracking-wide transition-all duration-200 truncate
+                      ${activeVariantId === v.id 
+                        ? `bg-gradient-to-r ${product.gradient} text-white shadow-lg transform scale-[1.02]` 
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'}
+                    `}
+                  >
+                    {v.name}
+                  </button>
+                ))}
+            </div>
           </div>
         )}
         
         <div className="flex items-baseline gap-1.5 mb-4">
-          <span className="text-2xl font-bold text-white">{displayPrice}</span>
+          <span className="text-xl sm:text-2xl font-bold text-white">{displayPrice}</span>
           <span className="text-gray-400 text-xs font-medium">{product.period}</span>
           <span className="ml-auto text-xs text-gray-500 line-through decoration-red-500/50 decoration-2">{displayOriginalPrice}</span>
         </div>
 
-        <p className="text-gray-400 text-xs mb-6 leading-relaxed border-b border-white/5 pb-4 min-h-[3rem]">
+        <p className="text-gray-400 text-xs mb-6 leading-relaxed border-b border-white/5 pb-4 min-h-[3rem] sm:min-h-[3.5rem]">
           {product.description}
         </p>
 
@@ -221,14 +224,14 @@ const ProductCard: React.FC<{ product: Product; onBuy: PremiumSelectionProps['on
               <div className={`flex-shrink-0 w-4 h-4 rounded-full bg-white/5 flex items-center justify-center border border-white/5`}>
                 <Check size={10} className="text-white" />
               </div>
-              {feature}
+              <span className="flex-1">{feature}</span>
             </li>
           ))}
         </ul>
 
         <button 
           onClick={() => onBuy({ name: displayName, price: displayPrice, category: product.category })}
-          className={`w-full py-3 rounded-xl font-bold text-white text-sm shadow-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r ${product.gradient} opacity-90 hover:opacity-100 hover:scale-[1.02] hover:shadow-${product.gradient.split('-')[1]}-500/30`}
+          className={`w-full py-3.5 rounded-xl font-bold text-white text-sm shadow-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r ${product.gradient} opacity-90 hover:opacity-100 hover:scale-[1.02] active:scale-[0.98] hover:shadow-${product.gradient.split('-')[1]}-500/30`}
         >
            Beli Sekarang <ExternalLink size={14} />
         </button>
