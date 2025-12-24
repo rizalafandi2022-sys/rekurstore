@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, Send, QrCode, Building2, Wallet, Copy, Banknote } from 'lucide-react';
+import { X, Lock, Mail, Smartphone, ChevronRight, CheckCircle, CreditCard, MessageCircle, QrCode, Building2, Wallet, Copy, Banknote } from 'lucide-react';
 
 interface PurchaseData {
   name: string;
@@ -51,46 +51,44 @@ const PurchaseModal: React.FC<PurchaseModalProps> = ({ isOpen, onClose, data }) 
     alert('Nomor disalin ke clipboard!');
   };
 
+  // Admin Number for Display and WhatsApp Link
+  const ADMIN_PHONE = "628995942945"; // International format for URL
+  const ADMIN_PHONE_DISPLAY = "0899-5942-945"; // Local format for UI display
+
   const getPaymentDetails = (method: string) => {
     switch(method) {
-        case 'BCA': return { number: '8210-8899-1234', name: 'Rekurstore Official' };
-        case 'Mandiri': return { number: '123-00-9876543-2', name: 'Rekurstore Official' };
-        case 'BRI': return { number: '0341-01-001234-50-1', name: 'Rekurstore Official' };
+        case 'BCA': return { number: '1234-5678-90', name: 'RekurStore Official' }; // Example Bank
+        case 'Mandiri': return { number: '123-00-0000000-0', name: 'RekurStore Official' }; // Example Bank
+        case 'BRI': return { number: '0000-01-000000-50-0', name: 'RekurStore Official' }; // Example Bank
         case 'DANA': 
         case 'OVO': 
         case 'GoPay': 
-        case 'ShopeePay': return { number: '0812-3456-7890', name: 'Admin Rekurstore' };
+        case 'ShopeePay': return { number: ADMIN_PHONE_DISPLAY, name: 'RekurStore Admin' }; // E-Wallet uses Admin Number
         default: return { number: '', name: '' };
     }
   };
 
-  const handleSendRealEmail = () => {
-    const subject = encodeURIComponent(`Konfirmasi Pembayaran: ${data.name}`);
-    const body = encodeURIComponent(`
-Halo Admin Rekurstore,
+  const handleSendWhatsApp = () => {
+    const message = `
+Halo Admin *RekurStore Official* 👋,
 
-Saya telah melakukan pembayaran untuk pesanan berikut:
+Saya ingin konfirmasi pembayaran pesanan baru:
 
---------------------------------
-DETAIL PESANAN
---------------------------------
-Produk       : ${data.name}
-Harga        : ${data.price}
-Kategori     : ${data.category}
-Metode Bayar : ${paymentMethod}
+📦 *DETAIL PESANAN*
+• Produk: ${data.name}
+• Kategori: ${data.category}
+• Harga: ${data.price}
+• Pembayaran via: ${paymentMethod}
 
---------------------------------
-DATA PELANGGAN
---------------------------------
-Email     : ${email}
-ID/Nomor  : ${target}
+👤 *DATA PELANGGAN*
+• ID/Tujuan: ${target}
+• Email: ${email}
 
-Mohon segera diproses. Berikut saya lampirkan bukti pembayaran (screenshot).
+Mohon diproses. Terima kasih!
+    `.trim();
 
-Terima kasih.
-    `);
-
-    window.location.href = `mailto:admin@rekurstore.com?subject=${subject}&body=${body}`;
+    const whatsappUrl = `https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const paymentDetails = getPaymentDetails(paymentMethod);
@@ -200,8 +198,8 @@ Terima kasih.
             </form>
           ) : (
             <div className="text-center py-2">
-               <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 animate-pulse-slow">
-                  <Banknote size={24} className="text-blue-400" />
+               <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 animate-pulse-slow">
+                  <Banknote size={24} className="text-green-400" />
                </div>
                <h3 className="text-xl font-bold text-white mb-1">Selesaikan Pembayaran</h3>
                <p className="text-gray-400 text-sm mb-6">
@@ -214,7 +212,7 @@ Terima kasih.
                   {paymentMethod === 'QRIS' ? (
                      <div className="flex flex-col items-center">
                         <div className="bg-white p-2 rounded-lg mb-3">
-                            {/* Simulate QR Code */}
+                            {/* Simulate QR Code - In a real app, this would be a real QRIS string */}
                             <div className="w-32 h-32 bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=RekurstorePayment')] bg-contain bg-no-repeat bg-center"></div>
                         </div>
                         <p className="text-xs text-gray-400">Scan menggunakan E-Wallet atau M-Banking apa saja.</p>
@@ -228,9 +226,9 @@ Terima kasih.
                             </div>
                         </div>
                         <div>
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Nomor Rekening / Virtual Account</p>
+                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Nomor Rekening / Tujuan</p>
                             <div className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
-                                <code className="font-mono text-blue-300 font-bold text-lg flex-1">{paymentDetails.number}</code>
+                                <code className="font-mono text-green-400 font-bold text-lg flex-1">{paymentDetails.number}</code>
                                 <button onClick={() => handleCopy(paymentDetails.number)} className="p-1.5 hover:bg-white/10 rounded-md transition-colors text-gray-400 hover:text-white">
                                     <Copy size={16} />
                                 </button>
@@ -244,18 +242,18 @@ Terima kasih.
                   )}
                </div>
 
-               {/* Real Email Button */}
+               {/* WhatsApp Confirmation Button */}
                <button 
                  type="button"
-                 onClick={handleSendRealEmail}
-                 className="mx-auto w-full relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-95"
+                 onClick={handleSendWhatsApp}
+                 className="mx-auto w-full relative z-10 flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-sm font-bold transition-all transform shadow-lg bg-[#25D366] hover:bg-[#20bd5a] text-white hover:scale-[1.02] active:scale-95 shadow-green-900/20"
                >
-                 <Send size={18} />
-                 Konfirmasi Pembayaran (Kirim Bukti)
+                 <MessageCircle size={20} className="fill-white text-white" />
+                 Konfirmasi ke WhatsApp Admin
                </button>
                
                <p className="text-[10px] text-gray-500 mt-4 px-4 leading-tight">
-                 Klik tombol di atas untuk membuka email Anda secara otomatis dengan detail pesanan yang sudah terisi. Lampirkan bukti transfer di email tersebut.
+                 Segera kirim bukti transfer ke Admin via WhatsApp untuk mempercepat proses transaksi Anda.
                </p>
 
                <div className="mt-4 pt-4 border-t border-white/10">
